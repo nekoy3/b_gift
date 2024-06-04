@@ -4,4 +4,5 @@ gift_*
 index.html
 test.txt
 webhook.txt
-**/__pycache__/**
+__pycache__/
+*.pyc
