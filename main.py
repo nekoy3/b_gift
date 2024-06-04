@@ -6,6 +6,7 @@ from file_io import save_list_to_file
 from file_io import read_or_create_config
 from gift import get_data
 from discord import sent_discord
+from discord import sent_discord_embed
 
 tn_percents, global_level = read_or_create_config()
 if tn_percents is None:
@@ -14,8 +15,11 @@ if global_level is None:
    global_level = 1
 
 def find_difference(original_data, updated_data):
-    added_data = [line for line in updated_data if line not in original_data]
-    removed_data = [line for line in original_data if line not in updated_data]
+    # エラー率を無視する為、データの要素-1を抜いた情報で比較して差分を出力
+    original_data2 = [d[:-1] for d in original_data]
+    updated_data2 = [d[:-1] for d in updated_data]
+    added_data = [line for line in updated_data if line[:-1] not in original_data2]
+    removed_data = [line for line in original_data if line[:-1] not in updated_data2]
     return added_data, removed_data
 
 # 設定されたレベル(global_level)が与えられた(必要な)レベルを超えたときのみ通知
@@ -48,13 +52,13 @@ for i in get_list:
     if i[0] in new_id:
        continue
     added, removed = find_difference(old_data_dict[str(i[0])], t_list)
-    added = [' '.join(i) for i in added]
-    removed = [' '.join(i) for i in removed]
+    added_str_list = [' '.join(i) for i in added]
+    removed_str_list = [' '.join(i) for i in removed]
 
     # 差分通知
     # Ctrl+K -> Ctrl+C (Ctrl+U)
-    added_str = '\n'.join(added)
-    removed_str = '\n'.join(removed)
+    added_str = '\n'.join(added_str_list)
+    removed_str = '\n'.join(removed_str_list)
     if added_str == "" and removed_str == "":
        continue
     s = f""" \
@@ -67,12 +71,30 @@ for i in get_list:
     send_message(2, s)
 
     # 追加データのうち、threshold_notificationを下回っているデータを通知
-
+    # チャンス商品通知
+    q = []
+    #print(added)
+    #print(tn_percents)
+    for data in added:
+       if float(data[3][:-1]) <= tn_percents:
+          #print(data[3][:-1])
+          q.append(data)
+    
+    for d in q:
+       a = i[1] + " チャンス商品が追加・更新されました。"
+       s = f"""
+残り: ***{d[0]}***
+___***{d[1]} -> {d[2]}***___
+額面比率: ***___{d[3]}___({d[4]})***
+※エラー率 {d[5]}
+https://beterugift.jp/
+"""
+       sent_discord_embed(a, s, i[0])
+          
 
 """
 今後
-設定ファイルを読み込むようにして、一定パーセンテージ以上の商品が追加されたときに通知する、他は通知しないように設定したい
-embedで送っているので、もうちょっと見栄えを良くしたい
+設定ファイルを読み込むようにして、一定パーセンテージ以上の商品が追加されたときに通知する、他は通知しないように設定したい -> 完了
+embedで送っているので、もうちょっと見栄えを良くしたい -> とりあえず完了
 Linuxサーバ上で動くように対応させる(そのままでも動くか・・・？
-データの中身について詳しくみられるように（エラー回数は無視、点数確認、パーセンテージ通知など）したい
 """
