@@ -1,3 +1,6 @@
+import configparser
+import os
+
 def save_list_to_file(file_name, l):
     with open(file_name, 'w') as f:
        f.write('')
@@ -26,3 +29,37 @@ def get_webhook():
 
 #save_list_to_file("test.txt", [["a", "b", "c"]])
 #print(read_list_from_file("data_numlist.txt", is_numlist=True))
+
+def read_or_create_config(fname='config.cfg'):
+    cfg_p = configparser.ConfigParser()
+
+    if os.path.exists(fname):
+        cfg_p.read(fname)
+        if 'general' in cfg_p and 'threshold_notification' in cfg_p['general']:
+            try:
+                threshold_notification = int(cfg_p['general']['threshold_notification'])
+                notification_level = int(cfg_p['general']['notification_level'])
+
+                if 1 <= notification_level <= 3 and 50 <= threshold_notification <= 100:
+                  return threshold_notification, notification_level
+                else:
+                  print('The value of notification_level is out of the valid range (1-3).')
+                  print('The value of threshold_notification is out of the valid range (50-100).')
+                  return None
+        
+            except ValueError:
+                print('The value of threshold_notification is not an integer.')
+                return None
+        else:
+            print('threshold_notification not found in the [general] section.')
+            return None
+    else:
+        cfg_p['general'] = {
+            'threshold_notification': '90',
+            'notification_level': '1'
+        }
+        with open(fname, 'w') as f:
+            cfg_p.write(f)
+        print(f'Config file {fname} created.')
+        exit()
+
