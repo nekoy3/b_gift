@@ -55,7 +55,7 @@ for i in get_list:
     # Ctrl+K -> Ctrl+C (Ctrl+U)
     added_str = '\n'.join(added)
     removed_str = '\n'.join(removed)
-    if added == "" and removed == "":
+    if added_str == "" and removed_str == "":
        continue
     s = f""" \
 {i[1]} 差分\n \
@@ -67,7 +67,7 @@ for i in get_list:
     send_message(2, s)
 
     # 追加データのうち、threshold_notificationを下回っているデータを通知
-    
+
 
 """
 今後
