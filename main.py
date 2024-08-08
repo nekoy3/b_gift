@@ -8,11 +8,13 @@ from gift import get_data
 from discord import sent_discord
 from discord import sent_discord_embed
 
-tn_percents, global_level = read_or_create_config()
+tn_percents, global_level ,extra_percents = read_or_create_config()
 if tn_percents is None:
    tn_percents = 90
 if global_level is None:
    global_level = 1
+if extra_percents is None:
+   extra_percents = 85
 
 def find_difference(original_data, updated_data):
     # エラー率を無視する為、データの要素-1を抜いた情報で比較して差分を出力
@@ -89,12 +91,9 @@ ___***{d[1]} -> {d[2]}***___
 ※エラー率 {d[5]}
 https://beterugift.jp/
 """
-       sent_discord_embed(a, s, i[0])
+       if int(d[3][:2]) <= extra_percents:
+           sent_discord_embed(a, s, i[0], extra=True)
+       else:
+           sent_discord_embed(a, s, i[0])
+       
           
-
-"""
-今後
-設定ファイルを読み込むようにして、一定パーセンテージ以上の商品が追加されたときに通知する、他は通知しないように設定したい -> 完了
-embedで送っているので、もうちょっと見栄えを良くしたい -> とりあえず完了
-Linuxサーバ上で動くように対応させる(そのままでも動くか・・・？
-"""

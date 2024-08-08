@@ -27,6 +27,11 @@ def get_data(data_num):
          break
     #不要な要素の削除
     t_l = [s for s in t_l if s != '|' and s != '買\xa0\xa0う']
+
+    # import random
+    # value = random.uniform(70, 90)
+    # t_l[3] = f"{value:.1f}%"
+
     t_l = t_l[:int(len(t_l)/2)]
     t_list.append(t_l)
   return t_list

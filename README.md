@@ -68,9 +68,11 @@ $ python3 main.py
 [general]
 threshold_notification = 87
 notification_level = 1
+extra_notification = 85
 ```
 threshold_notification(50-100) ... 額面比率がn%以下の商品のみ通知する。（default: 90)
 notification_level(1-3) ... 通知レベル。2, 3はデバッグ用（default: 1)
+extra_notification ... threashold_notification以下の値を入力すると、メンション付き通知を行う。（default: 85)
 
 # License
  

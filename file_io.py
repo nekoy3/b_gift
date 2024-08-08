@@ -39,13 +39,21 @@ def read_or_create_config(fname='config.cfg'):
             try:
                 threshold_notification = int(cfg_p['general']['threshold_notification'])
                 notification_level = int(cfg_p['general']['notification_level'])
+                extra_notification = int(cfg_p['general']['extra_notification'])
 
                 if 1 <= notification_level <= 3 and 50 <= threshold_notification <= 100:
-                  return threshold_notification, notification_level
+                  None
                 else:
                   print('The value of notification_level is out of the valid range (1-3).')
                   print('The value of threshold_notification is out of the valid range (50-100).')
-                  return None
+                  return 
+                
+                if extra_notification > threshold_notification:
+                   print('The value of extra_notification must be less than threshold_notification.')
+                   return 
+                else:
+                   return threshold_notification, notification_level, extra_notification
+                   
         
             except ValueError:
                 print('The value of threshold_notification is not an integer.')
@@ -56,7 +64,8 @@ def read_or_create_config(fname='config.cfg'):
     else:
         cfg_p['general'] = {
             'threshold_notification': '90',
-            'notification_level': '1'
+            'notification_level': '1',
+            'extra_notification': '85'
         }
         with open(fname, 'w') as f:
             cfg_p.write(f)

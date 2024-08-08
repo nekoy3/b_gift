@@ -31,7 +31,7 @@ def sent_discord(s):
   payload2['payload_json'] = json.dumps( payload2['payload_json'], ensure_ascii=False )
   res = requests.post(webhook_url, data = payload2 )
 
-def sent_discord_embed(name, value, id):
+def sent_discord_embed(name, value, id, extra=False):
   url = "https://beterugift.jp/assets/img/icon/" + str(id) +".jpg"
   # 現在の時刻を取得
   current_time = datetime.now()
@@ -43,15 +43,21 @@ def sent_discord_embed(name, value, id):
   except Exception as e:
     print(str(e))
   #print(url)
+  color = 7419530
+  content = ""
+  if extra:
+    color = 16753920
+    content = "@everyone"
   payload2 = {
     "payload_json" : {
         "username"      :"ギフト監視bot",
         "avatar_url"    : "https://beterugift.jp/assets/img/logo.png",
+        "content"      : content,
         "embeds": [
             {
                 "title"         : "ギフト監視bot",
                 "timestamp"     : formatted_time,
-                "color"         : 7419530,
+                "color"         : color,
                 "image"         : {
                       "url" : url         
                 },
